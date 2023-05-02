@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-group">
+            <label for="input-value">Input Value:</label>
+            <input type="number" class="form-control" id="input-value" placeholder="Enter input value">
+        </div>
+        <div class="form-group">
+            <label for="max-value">Max Value:</label>
+            <input type="number" class="form-control" id="max-value" placeholder="Enter max value">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="plotGraph()">Plot Graph</button>
+        <canvas id="bar-chart"></canvas>
+        <canvas id="pie-chart"></canvas>
+
+    </div>
+
+    
+    <!-- Javascript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let value = 100;
+        pieChart(value);
+        gredientGraph(value);
+
+        function plotGraph() {
+            var inputValue = Number(document.getElementById("input-value").value);
+            var maxValue = Number(document.getElementById("max-value").value);
+            var canvas = document.getElementById("bar-chart");
+            canvas.remove();
+            if (inputValue > maxValue) {
+                alert("Input value cannot be greater than max value.");
+                return;
+            }
+            activate(inputValue, maxValue);
+            document.getElementById("input-value").value = '';
+            document.getElementById("max-value").value = '';
+
+        }
+
+        function activate(inputValue, maxValue) {
+            var newCanvas = document.createElement("canvas");
+            newCanvas.id = "bar-chart";
+            document.body.appendChild(newCanvas);
+
+            value = (inputValue / maxValue) * 100;
+            pieChart(value);
+            gredientGraph(value);
+        }
+
+        // Pie chart
+        function pieChart(value) {
+            var gradient = null;
+            var canvas = document.getElementById("pie-chart");
+            var ctx = canvas.getContext("2d");
+            gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(0.4, '#c2e3ff');
+            gradient.addColorStop(0.9, '#008cff');
+            var data = {
+                labels: ["Percentage", "Rest"],
+                datasets: [{
+                    label: "Pie Chart",
+                    data: [value, 100 - value],
+                    backgroundColor: [gradient, '#dddddd'],
+                }],
+            };
+
+            var options = {
+                scales: {
+                    y: {
+                        ticks: {
+                            beginAtZero: true,
+                        }
+                    }
+                }
+            };
+
+            var ctx = document.getElementById("pie-chart").getContext("2d");
+            var myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options
+            });
+        }
+
+
+        // Gredient graph
+        function gredientGraph(value) {
+            var gradient = null;
+            var canvas = document.getElementById("bar-chart");
+            var ctx = canvas.getContext("2d");
+            gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(0.4, '#c2e3ff');
+            gradient.addColorStop(0.9, '#008cff');
+            var data = {
+                labels: ["Percentage"],
+                datasets: [{
+                    label: `${value}%`,
+                    data: [value],
+                    backgroundColor: gradient,
+                }],
+            };
+
+            var options = {
+                scales: {
+                    y: {
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                        max: Math.max(value, 100)
+                    },
+                },
+            };
+
+            var ctx = document.getElementById("bar-chart").getContext("2d");
+            var myBarChart = new Chart(ctx, {
+                type: "bar",
+                data: data,
+                options: options,
+            });
+        }
+    </script>
+</body>
+
+</html>
